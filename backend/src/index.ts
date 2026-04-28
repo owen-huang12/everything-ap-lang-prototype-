@@ -20,7 +20,16 @@ const app = new Hono().basePath("/api");
 app.use(
   "*",
   cors({
-    origin: process.env.FRONTEND_URL ?? "http://localhost:5173",
+    origin: (origin) => {
+      if (!origin) return null;
+      const allowed = [
+        "http://localhost:5173",
+        ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+      ];
+      if (allowed.includes(origin)) return origin;
+      if (/^https:\/\/everything-ap-lang-prototype[^.]*\.vercel\.app$/.test(origin)) return origin;
+      return null;
+    },
     credentials: true,
   }),
 );
