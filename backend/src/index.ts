@@ -17,10 +17,13 @@ import {
 import { sql, eq, inArray, and, gt } from "drizzle-orm";
 
 const app = new Hono().basePath("/api");
-app.use("*", cors({
-  origin: process.env.FRONTEND_URL ?? "http://localhost:5173",
-  credentials: true,
-}));
+app.use(
+  "*",
+  cors({
+    origin: process.env.FRONTEND_URL ?? "http://localhost:5173",
+    credentials: true,
+  }),
+);
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 const resend = new Resend(process.env.RESEND_API_KEY!);
