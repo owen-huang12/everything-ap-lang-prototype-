@@ -34,7 +34,7 @@ export default function EvidenceDetail({ item, onClose, onUpdate, onDelete }) {
     if (!title.trim()) { setError("Title is required."); return; }
     setError("");
     setSaving(true);
-    const res = await fetch(`http://localhost:3000/api/evidence/${item.evidence_id}`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/evidence/${item.evidence_id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -57,7 +57,7 @@ export default function EvidenceDetail({ item, onClose, onUpdate, onDelete }) {
   };
 
   const handleDelete = async () => {
-    await fetch(`http://localhost:3000/api/evidence/${item.evidence_id}`, {
+    await fetch(`${import.meta.env.VITE_BACKEND_API}/api/evidence/${item.evidence_id}`, {
       method: "DELETE",
       credentials: "include",
     });

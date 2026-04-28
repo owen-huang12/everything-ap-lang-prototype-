@@ -8,7 +8,7 @@ export default function ForgotPasswordPage({ onBack }) {
 
   const submit = async () => {
     setLoading(true);
-    await fetch("http://localhost:3000/api/auth/forgot-password", {
+    await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),

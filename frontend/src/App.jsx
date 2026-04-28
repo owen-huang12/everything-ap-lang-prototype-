@@ -33,7 +33,7 @@ function App() {
 
   // Rehydrate session and handle reset token on mount
   useEffect(() => {
-    fetch("http://localhost:3000/api/auth/me", { credentials: "include" })
+    fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/me`, { credentials: "include" })
       .then((r) => r.json())
       .then(({ user }) => { if (user) setUser(user); });
 
@@ -90,7 +90,7 @@ function App() {
   };
 
   const signOut = async () => {
-    await fetch("http://localhost:3000/api/auth/signout", { method: "POST", credentials: "include" });
+    await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/signout`, { method: "POST", credentials: "include" });
     setUser(null);
   };
 

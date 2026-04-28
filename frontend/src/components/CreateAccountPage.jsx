@@ -12,7 +12,7 @@ export default function CreateAccountPage({ onSignIn, onBack }) {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/api/auth/signup", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

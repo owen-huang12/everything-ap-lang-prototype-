@@ -27,7 +27,7 @@ export default function MCQPractice() {
 
   useEffect(() => {
     async function load() {
-      const res = await fetch("http://localhost:3000/api/generate-package");
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/generate-package`);
       const data = await res.json();
       setPassage(data.passage.body);
       setTitle(data.passage.title);

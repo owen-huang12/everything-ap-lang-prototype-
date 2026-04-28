@@ -7,7 +7,7 @@ export default function EvidenceTracker({ user }) {
 
   useEffect(() => {
     if (!user) { setLoading(false); return; }
-    fetch("http://localhost:3000/api/evidence", { credentials: "include" })
+    fetch(`${import.meta.env.VITE_BACKEND_API}/api/evidence`, { credentials: "include" })
       .then((r) => r.json())
       .then((data) => { setItems(data); setLoading(false); });
   }, [user]);

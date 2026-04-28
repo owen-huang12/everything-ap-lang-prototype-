@@ -33,7 +33,7 @@ export default function AddEvidenceForm({ onSave, onCancel }) {
     if (words > 400) return setError("Journal entry must be at most 400 words.");
 
     setSaving(true);
-    const res = await fetch("http://localhost:3000/api/evidence", {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/evidence`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
