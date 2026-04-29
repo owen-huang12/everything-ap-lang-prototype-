@@ -69,15 +69,6 @@ export default function MCQPractice() {
       </div>
 
       <div className="mcq-col">
-        <div className="stats-bar">
-          <div className="stat">time:</div>
-          <div className="stat">answered:</div>
-          <div className="stat">correct:</div>
-          <div className="stat">score:</div>
-          <div className="finish-cell">
-            <button className="finish-btn">finish</button>
-          </div>
-        </div>
         <div className="answers-box">
           {questions.length > 0 &&
             (() => {
