@@ -13,7 +13,7 @@ import ForgotPasswordPage from "./components/ForgotPasswordPage.jsx";
 import ResetPasswordPage from "./components/ResetPasswordPage.jsx";
 
 function App() {
-  const [tab, setTab] = useState("home");
+  const [tab, setTab] = useState(() => sessionStorage.getItem("tab") || "home");
   const [user, setUser] = useState(null);
   const [sidebarWidth, setSidebarWidth] = useState(180);
 
@@ -30,6 +30,8 @@ function App() {
   const [resetToken, setResetToken] = useState(
     () => new URLSearchParams(window.location.search).get("reset")
   );
+
+  useEffect(() => { sessionStorage.setItem("tab", tab); }, [tab]);
 
   // Rehydrate session and handle reset token on mount
   useEffect(() => {

@@ -34,7 +34,8 @@ app.use(
   }),
 );
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
+if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET environment variable must be set");
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
 const signToken = (userId: number) =>
@@ -47,7 +48,8 @@ const setAuthCookie = async (c: any, userId: number) => {
   const token = await signToken(userId);
   setCookie(c, "token", token, {
     httpOnly: true,
-    sameSite: "Lax",
+    sameSite: "None",
+    secure: true,
     maxAge: 60 * 60 * 24 * 7,
     path: "/",
   });
@@ -107,7 +109,9 @@ app.get("/auth/me", async (c) => {
       })
       .from(users)
       .where(eq(users.user_id, Number(payload.sub)));
-    return c.json({ user: user ?? null });
+    if (!user) return c.json({ user: null });
+    await setAuthCookie(c, user.user_id);
+    return c.json({ user });
   } catch {
     return c.json({ user: null });
   }
