@@ -97,7 +97,7 @@ function TermChip({ term, color, category, onSelect }) {
     <div
       ref={chipRef}
       className="term-chip"
-      style={{ height: `${COLLAPSED}px`, background: color.bg, border: `0.5px solid ${color.border}` }}
+      style={{ height: `${COLLAPSED}px`, background: color.bg, border: `0.5px solid black` }}
       onMouseEnter={expand}
       onMouseLeave={collapse}
       onClick={() => onSelect({ ...term, color, category })}
@@ -146,7 +146,7 @@ function Flashcards() {
   };
 
   const goTo = (newIdx) => {
-    if (innerRef.current) innerRef.current.style.transform = "rotateX(0deg)";
+    animate(innerRef.current, { rotateX: 0, duration: 0 });
     setFlipped(false);
     setIdx(newIdx);
   };
@@ -167,6 +167,7 @@ function Flashcards() {
           </div>
           <div className="flashcard-face flashcard-back">
             <span className="flashcard-def">{term.definition}</span>
+            <span className="flashcard-example">{term.example}</span>
           </div>
         </div>
       </div>
