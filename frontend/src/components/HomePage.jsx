@@ -28,7 +28,7 @@ const cards = [
   { label: "Essay guides", tab: "essay", info:"guides to score on all of the ap exam: rhetorical analysis essay, argumentative essay, synthesis essay and MCQ guide" },
   { label: "MCQ practice", tab: "mcq", info:"sharpen up on your MCQ solving strategy through real exam pratice"},
   { label: "Evidence tracker", tab: "evidenceTracker", info:"track pieces outside pieces of knowledge in one place" },
-  { label: "Current events", tab: "currentEvents", info:"browse all of the current events that was presented on in class"},
+  { label: "Rhetorical moves", tab: "currentEvents", info:"browse every key rhetorical device by category — hover to read definitions or flip through flashcards"},
 ];
 
 export default function HomePage({ onSelect, user, onSignIn }) {

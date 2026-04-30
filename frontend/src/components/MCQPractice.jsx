@@ -12,6 +12,8 @@ export default function MCQPractice() {
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const choicesRef = useRef([]);
+  const seenIds = useRef(new Set());
+  const passageIdRef = useRef(null);
 
   const sp = spring({ bounce: 0.15, duration: 10 });
   const anim = (el, props) => animate(el, { ...props, duration: 200, ease: sp });
@@ -25,19 +27,24 @@ export default function MCQPractice() {
     anim(el.querySelector(".choice-letter"), { borderRightColor: [from.border, to.border], background: [from.letter, to.letter] });
   };
 
-  useEffect(() => {
-    async function load() {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/generate-package`);
-      const data = await res.json();
-      setPassage(data.passage.body);
-      setTitle(data.passage.title);
-      setSource(data.passage.source ?? "");
-      setQuestions(data.questions);
-      setChoices(data.choices);
-      setLoading(false);
-    }
-    load();
-  }, []);
+  const loadSet = async (excludeIds = []) => {
+    setLoading(true);
+    const params = excludeIds.length > 0 ? `?exclude=${excludeIds.join(",")}` : "";
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_API}/api/generate-package${params}`);
+    const data = await res.json();
+    passageIdRef.current = data.passage.passage_id;
+    setPassage(data.passage.body);
+    setTitle(data.passage.title);
+    setSource(data.passage.source ?? "");
+    setQuestions(data.questions);
+    setChoices(data.choices);
+    setCurrentQ(0);
+    setSelectedChoice(null);
+    setSubmitted(false);
+    setLoading(false);
+  };
+
+  useEffect(() => { loadSet(); }, []);
 
   if (loading)
     return (
@@ -124,14 +131,17 @@ export default function MCQPractice() {
                           animChoice(choicesRef.current[selIdx], isCorrect ? CORRECT : WRONG, SEL);
                           if (!isCorrect) animChoice(choicesRef.current[corrIdx], CORRECT);
                           setSubmitted(true);
+                        } else if (currentQ === questions.length - 1) {
+                          seenIds.current.add(passageIdRef.current);
+                          loadSet([...seenIds.current]);
                         } else {
                           setSubmitted(false);
                           setSelectedChoice(null);
-                          setCurrentQ((q) => Math.min(q + 1, questions.length - 1));
+                          setCurrentQ((q) => q + 1);
                         }
                       }}
                     >
-                      {submitted ? "next question" : "submit"}
+                      {!submitted ? "submit" : currentQ === questions.length - 1 ? "next set" : "next question"}
                     </button>
                   </div>
                 </div>

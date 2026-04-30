@@ -7,6 +7,7 @@ import MCQPractice from "./components/MCQPractice.jsx";
 import HomePage from "./components/HomePage.jsx";
 import EvidenceTracker from "./components/EvidenceTracker.jsx";
 import EssayGuide from "./components/EssayGuide.jsx";
+import RhetoricalMoveList from "./components/RhetoricalMoveList.jsx";
 import SignInPage from "./components/SignInPage.jsx";
 import CreateAccountPage from "./components/CreateAccountPage.jsx";
 import ForgotPasswordPage from "./components/ForgotPasswordPage.jsx";
@@ -122,7 +123,7 @@ function App() {
           <button className={tab === "mcq" ? "toggled" : ""} onClick={() => setTab("mcq")}>MCQ practice</button>
           <button className={tab === "essay" ? "toggled" : ""} onClick={() => setTab("essay")}>Essay guide</button>
           <button className={tab === "evidenceTracker" ? "toggled" : ""} onClick={() => setTab("evidenceTracker")}>Evidence Tracker</button>
-          <button className={tab === "currentEvents" ? "toggled" : ""} onClick={() => setTab("currentEvents")}>Current events</button>
+          <button className={tab === "currentEvents" ? "toggled" : ""} onClick={() => setTab("currentEvents")}>Rhetorical moves</button>
           <button className="collapse-btn" onClick={collapse} aria-label="Collapse sidebar">«</button>
         </nav>
         <div
@@ -140,7 +141,7 @@ function App() {
           {tab === "mcq" && <MCQPractice />}
           {tab === "essay" && <EssayGuide user={user} />}
           {tab === "evidenceTracker" && <EvidenceTracker user={user} />}
-          {tab === "currentEvents" && <CurrentEvents />}
+          {tab === "currentEvents" && <RhetoricalMoveList />}
         </main>
       </div>
     </div>
@@ -149,8 +150,5 @@ function App() {
 
 
 
-function CurrentEvents() {
-  return <div className="center-screen"><p>Current events</p></div>;
-}
 
 export default App;

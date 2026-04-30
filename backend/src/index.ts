@@ -14,7 +14,7 @@ import {
   password_reset_tokens,
   evidence,
 } from "./schema";
-import { sql, eq, inArray, and, gt } from "drizzle-orm";
+import { sql, eq, inArray, notInArray, and, gt } from "drizzle-orm";
 
 const app = new Hono().basePath("/api");
 app.use(
@@ -27,14 +27,20 @@ app.use(
         ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
       ];
       if (allowed.includes(origin)) return origin;
-      if (/^https:\/\/everything-ap-lang-prototype[^.]*\.vercel\.app$/.test(origin)) return origin;
+      if (
+        /^https:\/\/everything-ap-lang-prototype[^.]*\.vercel\.app$/.test(
+          origin,
+        )
+      )
+        return origin;
       return null;
     },
     credentials: true,
   }),
 );
 
-if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET environment variable must be set");
+if (!process.env.JWT_SECRET)
+  throw new Error("JWT_SECRET environment variable must be set");
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -255,11 +261,52 @@ app.delete("/evidence/:id", async (c) => {
 // ── Existing routes ────────────────────────────────────────────
 
 app.get("/generate-package", async (c) => {
-  const rows = await db
-    .select()
-    .from(passage)
-    .orderBy(sql`RANDOM()`)
-    .limit(1);
+  const excludeParam = c.req.query("exclude");
+  const excludeIds = excludeParam
+    ? excludeParam
+        .split(",")
+        .map(Number)
+        .filter((n) => n > 0)
+    : [];
+
+  const passagesWithQuestions = db
+    .selectDistinct({ passage_id: questions.passage_id })
+    .from(questions)
+    .as("pwq");
+
+  let rows =
+    excludeIds.length > 0
+      ? await db
+          .select()
+          .from(passage)
+          .innerJoin(
+            passagesWithQuestions,
+            eq(passage.passage_id, passagesWithQuestions.passage_id),
+          )
+          .where(notInArray(passage.passage_id, excludeIds))
+          .orderBy(sql`RANDOM()`)
+          .limit(1)
+      : await db
+          .select()
+          .from(passage)
+          .innerJoin(
+            passagesWithQuestions,
+            eq(passage.passage_id, passagesWithQuestions.passage_id),
+          )
+          .orderBy(sql`RANDOM()`)
+          .limit(1);
+
+  if (rows.length === 0)
+    rows = await db
+      .select()
+      .from(passage)
+      .innerJoin(
+        passagesWithQuestions,
+        eq(passage.passage_id, passagesWithQuestions.passage_id),
+      )
+      .orderBy(sql`RANDOM()`)
+      .limit(1);
+
   const randomRow = rows[0];
 
   const question_array = await db
