@@ -68,7 +68,7 @@ export default function MCQPractice() {
             </button>
           </div>
           <div className="passage-text">
-            {passage.split("\n").map((para, i) => (
+            {passage.split("\n").filter(line => line.trim()).map((para, i) => (
               <p key={i}>{para.trim()}</p>
             ))}
           </div>

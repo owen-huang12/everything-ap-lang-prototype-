@@ -16,7 +16,18 @@ import {
 } from "./schema";
 import { sql, eq, inArray, notInArray, and, gt } from "drizzle-orm";
 
+console.log("Starting server...");
+console.log("DATABASE_URL set:", !!process.env.DATABASE_URL);
+console.log("JWT_SECRET set:", !!process.env.JWT_SECRET);
+
 const app = new Hono().basePath("/api");
+
+// Global error handler
+app.onError((err, c) => {
+  console.error("Unhandled error:", err);
+  return c.json({ error: String(err), stack: err.stack }, 500);
+});
+
 app.use(
   "*",
   cors({
@@ -260,12 +271,27 @@ app.delete("/evidence/:id", async (c) => {
 
 // ── Existing routes ────────────────────────────────────────────
 
+// Health check endpoint
+app.get("/health", async (c) => {
+  try {
+    // Test database connection
+    await db.select().from(passage).limit(1);
+    return c.json({ status: "ok", db: "connected" });
+  } catch (err) {
+    console.error("Health check failed:", err);
+    return c.json({ status: "error", db: "disconnected", error: String(err) }, 500);
+  }
+});
+
 app.get("/generate-package", async (c) => {
+  console.log("generate-package: request received");
   try {
     const excludeParam = c.req.query("exclude");
     const excludeIds = excludeParam
       ? excludeParam.split(",").map(Number).filter((n) => n > 0)
       : [];
+
+    console.log("generate-package: querying passages, exclude:", excludeIds);
 
     let rows = excludeIds.length > 0
       ? await db.select().from(passage).where(notInArray(passage.passage_id, excludeIds)).orderBy(sql`RANDOM()`).limit(1)
@@ -274,7 +300,13 @@ app.get("/generate-package", async (c) => {
     if (rows.length === 0)
       rows = await db.select().from(passage).orderBy(sql`RANDOM()`).limit(1);
 
+    if (rows.length === 0) {
+      console.error("generate-package: no passages found in database");
+      return c.json({ error: "No passages found in database" }, 404);
+    }
+
     const randomRow = rows[0];
+    console.log("generate-package: found passage", randomRow.passage_id);
 
     const question_array = await db
       .select()
@@ -286,6 +318,7 @@ app.get("/generate-package", async (c) => {
       ? await db.select().from(choice).where(inArray(choice.question_id, questionIds))
       : [];
 
+    console.log("generate-package: returning", question_array.length, "questions");
     return c.json({ passage: randomRow, questions: question_array, choices: choice_array });
   } catch (err) {
     console.error("generate-package error:", err);

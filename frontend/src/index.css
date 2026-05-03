@@ -666,7 +666,11 @@ h1 {
 }
 
 .passage-text p {
-    margin: 0 0 15px 0;
+    margin: 0 0 4px 0;
+}
+
+.passage-text p:empty {
+    display: none;
 }
 
 .passage-text p:last-child {
@@ -1376,6 +1380,211 @@ h1 {
 .essay-content-placeholder {
     font-size: 13px;
     color: #999;
+}
+
+/* ── Essay Page Card ── */
+.essay-page-progress {
+    position: absolute;
+    right: 24px;
+    font-size: 12px;
+    color: #999;
+}
+
+.essay-page-card {
+    border: 0.5px solid black;
+    background: white;
+    padding: 40px 48px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 780px;
+    margin: 0 auto;
+    min-height: 340px;
+}
+
+.essay-page-heading {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: #888;
+    text-transform: lowercase;
+}
+
+.essay-page-text strong {
+    font-weight: inherit;
+    text-decoration: underline;
+}
+
+.essay-page-text {
+    font-size: 14px;
+    line-height: 2;
+    color: #222;
+    margin: 0;
+}
+
+.essay-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: #555;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.8s step-end infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+.essay-page-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding-top: 8px;
+}
+
+.essay-nav-btn {
+    background: none;
+    border: 0.5px solid black;
+    padding: 9px 24px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    color: #444;
+    transition: background 0.15s;
+}
+
+.essay-nav-btn:hover {
+    background: #f5f5f5;
+}
+
+.essay-nav-btn--primary {
+    background: #222;
+    color: white;
+    border-color: #222;
+}
+
+.essay-nav-btn--primary:hover {
+    background: #444;
+    border-color: #444;
+}
+
+/* ── Essay page paragraphs ── */
+.essay-page-paragraphs {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+}
+
+/* ── Rubric (score yourself pages only) ── */
+.guide-rubric-wrap {
+    animation: guideFadeIn 0.35s ease;
+    margin-top: 4px;
+}
+
+@keyframes guideFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.guide-rubric {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    border: 0.5px solid #ddd;
+}
+
+.guide-rubric-row {
+    padding: 12px 14px;
+    border-bottom: 0.5px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.guide-rubric-row:last-child {
+    border-bottom: none;
+}
+
+.guide-rubric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.guide-rubric-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #333;
+}
+
+.guide-rubric-points {
+    font-size: 12px;
+    color: #888;
+    white-space: nowrap;
+}
+
+.guide-rubric-text {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #666;
+}
+
+/* ── Rubric table (standalone rubric slide) ── */
+.guide-rubric-table-wrap {
+    overflow-x: auto;
+    flex: 1;
+}
+
+.guide-rubric-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+
+.guide-rubric-table thead tr {
+    background: #1a2340;
+}
+
+.guide-rubric-table th {
+    padding: 10px 14px;
+    text-align: left;
+    color: white;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.guide-rubric-table td {
+    padding: 14px;
+    border: 0.5px solid #ddd;
+    vertical-align: top;
+    color: #222;
+    line-height: 1.6;
+}
+
+.guide-rubric-table tr:nth-child(even) td {
+    background: #f7f8fa;
+}
+
+.guide-rubric-table td:first-child {
+    white-space: nowrap;
+}
+
+/* ── Rhetorical Move List
+
+@keyframes guideFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Rhetorical Move List ──────────────────────────────── */
