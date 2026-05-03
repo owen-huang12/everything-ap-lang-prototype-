@@ -261,72 +261,36 @@ app.delete("/evidence/:id", async (c) => {
 // ── Existing routes ────────────────────────────────────────────
 
 app.get("/generate-package", async (c) => {
-  const excludeParam = c.req.query("exclude");
-  const excludeIds = excludeParam
-    ? excludeParam
-        .split(",")
-        .map(Number)
-        .filter((n) => n > 0)
-    : [];
+  try {
+    const excludeParam = c.req.query("exclude");
+    const excludeIds = excludeParam
+      ? excludeParam.split(",").map(Number).filter((n) => n > 0)
+      : [];
 
-  const passagesWithQuestions = db
-    .selectDistinct({ passage_id: questions.passage_id })
-    .from(questions)
-    .as("pwq");
+    let rows = excludeIds.length > 0
+      ? await db.select().from(passage).where(notInArray(passage.passage_id, excludeIds)).orderBy(sql`RANDOM()`).limit(1)
+      : await db.select().from(passage).orderBy(sql`RANDOM()`).limit(1);
 
-  let rows =
-    excludeIds.length > 0
-      ? await db
-          .select()
-          .from(passage)
-          .innerJoin(
-            passagesWithQuestions,
-            eq(passage.passage_id, passagesWithQuestions.passage_id),
-          )
-          .where(notInArray(passage.passage_id, excludeIds))
-          .orderBy(sql`RANDOM()`)
-          .limit(1)
-      : await db
-          .select()
-          .from(passage)
-          .innerJoin(
-            passagesWithQuestions,
-            eq(passage.passage_id, passagesWithQuestions.passage_id),
-          )
-          .orderBy(sql`RANDOM()`)
-          .limit(1);
+    if (rows.length === 0)
+      rows = await db.select().from(passage).orderBy(sql`RANDOM()`).limit(1);
 
-  if (rows.length === 0)
-    rows = await db
+    const randomRow = rows[0];
+
+    const question_array = await db
       .select()
-      .from(passage)
-      .innerJoin(
-        passagesWithQuestions,
-        eq(passage.passage_id, passagesWithQuestions.passage_id),
-      )
-      .orderBy(sql`RANDOM()`)
-      .limit(1);
+      .from(questions)
+      .where(eq(questions.passage_id, randomRow.passage_id));
 
-  const randomRow = rows[0];
+    const questionIds = question_array.map((q) => q.question_id);
+    const choice_array = questionIds.length
+      ? await db.select().from(choice).where(inArray(choice.question_id, questionIds))
+      : [];
 
-  const question_array = await db
-    .select()
-    .from(questions)
-    .where(eq(questions.passage_id, randomRow.passage_id));
-
-  const questionIds = question_array.map((q) => q.question_id);
-  const choice_array = questionIds.length
-    ? await db
-        .select()
-        .from(choice)
-        .where(inArray(choice.question_id, questionIds))
-    : [];
-
-  return c.json({
-    passage: randomRow,
-    questions: question_array,
-    choices: choice_array,
-  });
+    return c.json({ passage: randomRow, questions: question_array, choices: choice_array });
+  } catch (err) {
+    console.error("generate-package error:", err);
+    return c.json({ error: String(err) }, 500);
+  }
 });
 
 export default app;
