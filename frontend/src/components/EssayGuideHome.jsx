@@ -26,9 +26,9 @@ const GUIDES = [
 ];
 
 const VIDEOS = [
-  "https://www.youtube.com/watch?v=bUyzJ7RTzig",
-  "https://www.youtube.com/watch?v=YHhKiWfWdHY",
-  "https://www.youtube.com/watch?v=Kant_3jwhf8",
+  { label: "rhetorical analysis", url: "https://www.youtube.com/watch?v=bUyzJ7RTzig" },
+  { label: "synthesis", url: "https://www.youtube.com/watch?v=YHhKiWfWdHY" },
+  { label: "argument", url: "https://www.youtube.com/watch?v=Kant_3jwhf8" },
 ];
 
 function GuideCard({ guide, onClick }) {
@@ -95,9 +95,9 @@ function VideoLinks() {
     <div className="video-links-wrap">
       <div className="video-links-header">Mrs. Peer Editor videos</div>
       <div className="video-links-list">
-        {VIDEOS.map((url, i) => (
-          <a key={i} className="video-link" href={url} target="_blank" rel="noopener noreferrer">
-            {url}
+        {VIDEOS.map((v, i) => (
+          <a key={i} className="video-link" href={v.url} target="_blank" rel="noopener noreferrer">
+            {v.label}
           </a>
         ))}
       </div>
