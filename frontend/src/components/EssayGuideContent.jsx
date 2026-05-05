@@ -7,20 +7,14 @@ const CHAR_MS = 12;
 // During streaming: strip markers, show plain text.
 // After streaming: parse and render <strong> tags.
 function Para({ text, isLast, streaming }) {
-  if (streaming) {
-    return (
-      <p className="essay-page-text">
-        {text.replace(/\*\*/g, "")}
-        {isLast && <span className="essay-cursor" />}
-      </p>
-    );
-  }
-  const parts = text.split("**");
+  const cleaned = streaming ? text.replace(/\*{1,2}$/, "") : text;
+  const parts = cleaned.split("**");
   return (
     <p className="essay-page-text">
       {parts.map((part, i) =>
         i % 2 === 1 ? <strong key={i}>{part}</strong> : part
       )}
+      {isLast && streaming && <span className="essay-cursor" />}
     </p>
   );
 }

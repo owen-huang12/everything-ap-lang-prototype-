@@ -1,6 +1,3 @@
-import { useRef } from "react";
-import { animate } from "animejs";
-
 const GUIDES = [
   {
     id: "mcq",
@@ -28,45 +25,83 @@ const GUIDES = [
   },
 ];
 
-const COLLAPSED = 64;
-const EXPANDED = 140;
+const VIDEOS = [
+  "https://www.youtube.com/watch?v=bUyzJ7RTzig",
+  "https://www.youtube.com/watch?v=YHhKiWfWdHY",
+  "https://www.youtube.com/watch?v=Kant_3jwhf8",
+];
 
 function GuideCard({ guide, onClick }) {
-  const cardRef = useRef(null);
-  const descRef = useRef(null);
-  const cardAnim = useRef(null);
-  const descAnim = useRef(null);
-
-  const cancelAll = () => {
-    if (cardAnim.current) { cardAnim.current.cancel(); cardAnim.current = null; }
-    if (descAnim.current) { descAnim.current.cancel(); descAnim.current = null; }
-  };
-
-  const expand = () => {
-    cancelAll();
-    descRef.current.style.opacity = 0;
-    cardAnim.current = animate(cardRef.current, { height: `${EXPANDED}px`, duration: 400, ease: "outExpo" });
-    descAnim.current = animate(descRef.current, { opacity: 1, duration: 250, ease: "outExpo", delay: 120 });
-  };
-
-  const collapse = () => {
-    cancelAll();
-    descRef.current.style.opacity = 0;
-    cardAnim.current = animate(cardRef.current, { height: `${COLLAPSED}px`, duration: 350, ease: "outExpo" });
-  };
-
   return (
     <button
-      ref={cardRef}
       className="essay-guide-card"
-      style={{ background: guide.bg, height: `${COLLAPSED}px` }}
-      onMouseEnter={expand}
-      onMouseLeave={collapse}
+      style={{ background: guide.bg }}
       onClick={() => onClick(guide)}
     >
       <span className="essay-guide-label">{guide.label}</span>
-      <span ref={descRef} className="essay-guide-teaser">{guide.teaser}</span>
+      <span className="essay-guide-teaser">{guide.teaser}</span>
     </button>
+  );
+}
+
+function TimingGuide() {
+  return (
+    <div className="timing-guide-wrap">
+      <div className="timing-guide-header">Timing guide</div>
+      <div className="timing-sections">
+        <div className="timing-section">
+          <div className="timing-section-label">
+            <span>section I</span>
+            <span className="timing-section-time">1 hr</span>
+          </div>
+          <div className="timing-essay-strips">
+            <div className="timing-essay-strip" style={{ background: "#fffce5" }}>
+              <span>mcq</span>
+              <span className="timing-strip-detail">multiple choice questions</span>
+              <span className="timing-row-total">1 hr</span>
+            </div>
+          </div>
+        </div>
+        <div className="timing-section">
+          <div className="timing-section-label">
+            <span>section II</span>
+            <span className="timing-section-time">2 hr 15 min</span>
+          </div>
+          <div className="timing-essay-strips">
+            <div className="timing-essay-strip" style={{ background: "#e5f5e5" }}>
+              <span>synthesis</span>
+              <span className="timing-strip-detail">15 min prep · 25 min write</span>
+              <span className="timing-row-total">~40 min</span>
+            </div>
+            <div className="timing-essay-strip" style={{ background: "#ede5ff" }}>
+              <span>rhetorical analysis</span>
+              <span className="timing-strip-detail">10 min read · 25 min write</span>
+              <span className="timing-row-total">~35 min</span>
+            </div>
+            <div className="timing-essay-strip" style={{ background: "#e5eaf5" }}>
+              <span>argument</span>
+              <span className="timing-strip-detail">5 min outline · 30 min write</span>
+              <span className="timing-row-total">~35 min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function VideoLinks() {
+  return (
+    <div className="video-links-wrap">
+      <div className="video-links-header">Mrs. Peer Editor videos</div>
+      <div className="video-links-list">
+        {VIDEOS.map((url, i) => (
+          <a key={i} className="video-link" href={url} target="_blank" rel="noopener noreferrer">
+            {url}
+          </a>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -81,6 +116,8 @@ export default function EssayGuideHome({ onSelect }) {
           <GuideCard key={g.id} guide={g} onClick={onSelect} />
         ))}
       </div>
+      <TimingGuide />
+      <VideoLinks />
     </div>
   );
 }

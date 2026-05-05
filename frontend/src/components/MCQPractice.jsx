@@ -115,9 +115,6 @@ export default function MCQPractice() {
                       </button>
                     ))}
                   </div>
-                  <div style={{ textAlign: "center" }}>
-                    {submitted && <button className="see-reason">see the reason ...</button>}
-                  </div>
                   <div className="question-footer">
 
                     <button
